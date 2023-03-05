@@ -15,13 +15,14 @@ public class EmployeeDAOImpl implements EmployeeDAO {
     }
 
     @Override
-    public void createEmployee(Employee employee) {
+    public void createEmployee(String firstName, String lastName, String gender, int age, int cityId) {
         try (PreparedStatement statement = getConnection().prepareStatement
-                ("INSERT INTO employee (first_name, last_Name, gender, age) VALUES (?, ?, ?, ?)")) {
-            statement.setString(1, employee.getFirstName());
-            statement.setString(2, employee.getLastName());
-            statement.setString(3, employee.getGender());
-            statement.setInt(4, employee.getAge());
+                ("INSERT INTO employee (first_name, last_Name, gender, age, city_id) VALUES (?, ?, ?, ?, ?)")) {
+            statement.setString(1, firstName);
+            statement.setString(2, lastName);
+            statement.setString(3, gender);
+            statement.setInt(4, age);
+            statement.setInt(5, cityId);
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -29,20 +30,18 @@ public class EmployeeDAOImpl implements EmployeeDAO {
     }
 
     @Override
-    public Employee getEmployeeById(int id) {
-        Employee employee = null;
+    public Employee getEmployeeById(int cityId) {
+        Employee employee = new Employee();
         try (PreparedStatement statement = getConnection().prepareStatement
-                ("SELECT * FROM employee INNER JOIN city ON city.city_id = employee.city_id AND employee.id = ?")) {
-            statement.setInt(1, id);
+                ("SELECT * FROM employee WHERE id = (?)")) {
+            statement.setInt(1, cityId);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                employee.setId(Integer.parseInt(resultSet.getString("id")));
                 employee.setFirstName(resultSet.getString("first_name"));
                 employee.setLastName(resultSet.getString("last_name"));
                 employee.setGender(resultSet.getString("gender"));
-                employee.setAge(Integer.parseInt(resultSet.getString("age")));
-                employee.setCity(new City(resultSet.getInt("city_id"),
-                        resultSet.getString("city_name")));
+                employee.setAge(resultSet.getInt("age"));
+                employee.setCityId(resultSet.getInt("city_id"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -56,14 +55,12 @@ public class EmployeeDAOImpl implements EmployeeDAO {
         try (PreparedStatement statement = getConnection().prepareStatement ("SELECT * FROM employee")) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                int id = Integer.parseInt(resultSet.getString("id"));
                 String firstName = resultSet.getString("first_name");
                 String lastName = resultSet.getString("last_name");
                 String gender = resultSet.getString("gender");
-                int age = Integer.parseInt(resultSet.getString("age"));
-                City city = new City(resultSet.getInt("city_id"),
-                        resultSet.getString("city_name"));
-                employeeList.add(new Employee(id, firstName, lastName, gender, age, city));
+                int age = resultSet.getInt("age");
+                int cityId = resultSet.getInt("city_id");
+                employeeList.add(new Employee(firstName, lastName, gender, age, cityId));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -72,11 +69,15 @@ public class EmployeeDAOImpl implements EmployeeDAO {
     }
 
     @Override
-    public void correctiveEmployeeById(int id, int age) {
+    public void correctiveEmployeeById(int id, String firstName, String lastName, String gender, int age, int cityId) {
         try (PreparedStatement statement = getConnection().prepareStatement
-                ("UPDATE employee SET age=(?) WHERE id=(?)")) {
-            statement.setInt(1, age);
-            statement.setInt(2, id);
+                ("UPDATE employee SET first_name = (?), last_name = (?), gender = (?), age = (?), city_id = (?) WHERE id = (?)")) {
+            statement.setString(1, firstName);
+            statement.setString(2, lastName);
+            statement.setString(3, gender);
+            statement.setInt(4, age);
+            statement.setInt(5, cityId);
+            statement.setInt(6, id);
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

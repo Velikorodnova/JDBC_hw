@@ -23,14 +23,11 @@ public class Application {
                 System.out.println(gender);
                 System.out.println(city_name);
             }
-            EmployeeDAOImpl employeeDAOImpl = new EmployeeDAOImpl();
-            City city = new City(7, "Tyla");
-            Employee employee1 = new Employee(7, "Alena", "Efimova", "woman", 25, city);
-            employeeDAOImpl.createEmployee(employee1);
-            List<Employee> employeeList = new ArrayList<>(employeeDAOImpl.getAllEmployee());
-            for (Employee employee : employeeList) {
-                System.out.println(employee);
-            }
+
+            EmployeeDAOImpl employeeDAOImpl= new EmployeeDAOImpl();
+            employeeDAOImpl.createEmployee("Alena", "Efimova", "woman", 25, 6);
+            System.out.println(employeeDAOImpl.getAllEmployee());
+            System.out.println(employeeDAOImpl.getEmployeeById(1));
         }
     }
 }
