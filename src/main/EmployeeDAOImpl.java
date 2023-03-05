@@ -4,17 +4,20 @@ import java.util.List;
 
 public class EmployeeDAOImpl implements EmployeeDAO {
 
-    public EmployeeDAOImpl(Connection connection) {
+    private Connection getConnection() {
+        Connection CONNECTION;
+        try {
+            CONNECTION = DriverManager.getConnection(Application.URL, Application.USER, Application.PASSWORD);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return CONNECTION;
     }
 
     @Override
     public void createEmployee(Employee employee) {
-        final String user = "postgres";
-        final String password = "51PtkRdf";
-        final String url = "jdbc:postgresql://localhost:5432/skypro";
-        try (final Connection connection = DriverManager.getConnection(url, user, password);
-             PreparedStatement statement = connection.prepareStatement
-                     ("INSERT INTO employee (first_name, last_Name, gender, age) VALUES (?, ?, ?, ?)")) {
+        try (PreparedStatement statement = getConnection().prepareStatement
+                ("INSERT INTO employee (first_name, last_Name, gender, age) VALUES (?, ?, ?, ?)")) {
             statement.setString(1, employee.getFirstName());
             statement.setString(2, employee.getLastName());
             statement.setString(3, employee.getGender());
@@ -27,13 +30,9 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 
     @Override
     public Employee getEmployeeById(int id) {
-        Employee employee = new Employee();
-        final String user = "postgres";
-        final String password = "51PtkRdf";
-        final String url = "jdbc:postgresql://localhost:5432/skypro";
-        try (final Connection connection = DriverManager.getConnection(url, user, password);
-             PreparedStatement statement = connection.prepareStatement
-                     ("SELECT * FROM employee INNER JOIN city ON city.city_id = employee.city_id AND employee.id = ?")) {
+        Employee employee = null;
+        try (PreparedStatement statement = getConnection().prepareStatement
+                ("SELECT * FROM employee INNER JOIN city ON city.city_id = employee.city_id AND employee.id = ?")) {
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -42,6 +41,8 @@ public class EmployeeDAOImpl implements EmployeeDAO {
                 employee.setLastName(resultSet.getString("last_name"));
                 employee.setGender(resultSet.getString("gender"));
                 employee.setAge(Integer.parseInt(resultSet.getString("age")));
+                employee.setCity(new City(resultSet.getInt("city_id"),
+                        resultSet.getString("city_name")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -52,12 +53,7 @@ public class EmployeeDAOImpl implements EmployeeDAO {
     @Override
     public List<Employee> getAllEmployee() {
         List<Employee> employeeList = new ArrayList<>();
-        final String user = "postgres";
-        final String password = "51PtkRdf";
-        final String url = "jdbc:postgresql://localhost:5432/skypro";
-        try (final Connection connection = DriverManager.getConnection(url, user, password);
-             PreparedStatement statement = connection.prepareStatement
-                     ("SELECT * FROM employee INNER JOIN city ON employee.id=city.city_id")) {
+        try (PreparedStatement statement = getConnection().prepareStatement ("SELECT * FROM employee")) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 int id = Integer.parseInt(resultSet.getString("id"));
@@ -65,7 +61,9 @@ public class EmployeeDAOImpl implements EmployeeDAO {
                 String lastName = resultSet.getString("last_name");
                 String gender = resultSet.getString("gender");
                 int age = Integer.parseInt(resultSet.getString("age"));
-                employeeList.add(new Employee(id, firstName, lastName, gender, age));
+                City city = new City(resultSet.getInt("city_id"),
+                        resultSet.getString("city_name"));
+                employeeList.add(new Employee(id, firstName, lastName, gender, age, city));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -75,15 +73,11 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 
     @Override
     public void correctiveEmployeeById(int id, int age) {
-        final String user = "postgres";
-        final String password = "51PtkRdf";
-        final String url = "jdbc:postgresql://localhost:5432/skypro";
-        try (final Connection connection = DriverManager.getConnection(url, user, password);
-             PreparedStatement statement = connection.prepareStatement
-                     ("UPDATE employee SET age=(?) WHERE id=(?)")) {
+        try (PreparedStatement statement = getConnection().prepareStatement
+                ("UPDATE employee SET age=(?) WHERE id=(?)")) {
             statement.setInt(1, age);
             statement.setInt(2, id);
-            statement.executeQuery();
+            statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -91,14 +85,10 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 
     @Override
     public void deleteEmployeeById(int id) {
-        final String user = "postgres";
-        final String password = "51PtkRdf";
-        final String url = "jdbc:postgresql://localhost:5432/skypro";
-        try (final Connection connection = DriverManager.getConnection(url, user, password);
-             PreparedStatement statement = connection.prepareStatement(
+        try (PreparedStatement statement = getConnection().prepareStatement(
                      "DELETE FROM employee WHERE id=(?)")) {
             statement.setInt(1, id);
-            statement.executeQuery();
+            statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

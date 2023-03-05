@@ -1,20 +1,20 @@
 import java.util.Objects;
 
 public class City {
-    private int id;
+    private int cityId;
     private String cityName;
 
-    public City(int id, String cityName) {
-        this.id = id;
+    public City(int cityId, String cityName) {
+        this.cityId = cityId;
         this.cityName = cityName;
     }
 
-    public int getId() {
-        return id;
+    public int getCityId() {
+        return cityId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCityId(int cityId) {
+        this.cityId = cityId;
     }
 
     public String getCityName() {
@@ -30,18 +30,18 @@ public class City {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         City city = (City) o;
-        return id == city.id && Objects.equals(cityName, city.cityName);
+        return cityId == city.cityId && Objects.equals(cityName, city.cityName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, cityName);
+        return Objects.hash(cityId, cityName);
     }
 
     @Override
     public String toString() {
         return "City{" +
-                "id=" + id +
+                "cityId=" + cityId +
                 ", cityName='" + cityName + '\'' +
                 '}';
     }

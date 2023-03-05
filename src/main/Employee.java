@@ -6,16 +6,15 @@ public class Employee {
     private String lastName;
     private String gender;
     private int age;
+    private City city;
 
-    public Employee(int id, String firstName, String lastName, String gender, int age) {
+    public Employee(int id, String firstName, String lastName, String gender, int age, City city) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;
         this.age = age;
-    }
-
-    public Employee() {
+        this.city = city;
     }
 
     public int getId() {
@@ -58,17 +57,25 @@ public class Employee {
         this.age = age;
     }
 
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Employee employee = (Employee) o;
-        return id == employee.id && age == employee.age && Objects.equals(firstName, employee.firstName) && Objects.equals(lastName, employee.lastName) && Objects.equals(gender, employee.gender);
+        return id == employee.id && age == employee.age && Objects.equals(firstName, employee.firstName) && Objects.equals(lastName, employee.lastName) && Objects.equals(gender, employee.gender) && Objects.equals(city, employee.city);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, gender, age);
+        return Objects.hash(id, firstName, lastName, gender, age, city);
     }
 
     @Override
@@ -79,6 +86,7 @@ public class Employee {
                 ", lastName='" + lastName + '\'' +
                 ", gender='" + gender + '\'' +
                 ", age=" + age +
+                ", city=" + city +
                 '}';
     }
 }

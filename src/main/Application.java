@@ -1,12 +1,15 @@
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Application1 {
+public class Application {
+    static final String USER = "postgres";
+    static final String PASSWORD = "51PtkRdf";
+    static final String URL = "jdbc:postgresql://localhost:5432/skypro";
+
     public static void main(String[] args) throws SQLException {
-        final String user = "postgres";
-        final String password = "51PtkRdf";
-        final String url = "jdbc:postgresql://localhost:5432/skypro";
-        try (final Connection connection = DriverManager.getConnection(url, user, password)) {
-            PreparedStatement statement = connection.prepareStatement
+        try (final Connection CONNECTION = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            PreparedStatement statement = CONNECTION.prepareStatement
                     ("SELECT * FROM employee INNER JOIN city ON city.city_id = employee.city_id AND employee.id = ?");
             statement.setInt(1, 1);
             final ResultSet resultSet = statement.executeQuery();
@@ -19,6 +22,14 @@ public class Application1 {
                 System.out.println(lastName);
                 System.out.println(gender);
                 System.out.println(city_name);
+            }
+            EmployeeDAOImpl employeeDAOImpl = new EmployeeDAOImpl();
+            City city = new City(7, "Tyla");
+            Employee employee1 = new Employee(7, "Alena", "Efimova", "woman", 25, city);
+            employeeDAOImpl.createEmployee(employee1);
+            List<Employee> employeeList = new ArrayList<>(employeeDAOImpl.getAllEmployee());
+            for (Employee employee : employeeList) {
+                System.out.println(employee);
             }
         }
     }
