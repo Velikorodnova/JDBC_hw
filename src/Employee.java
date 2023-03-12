@@ -1,17 +1,14 @@
-
-import com.sun.istack.NotNull;
-
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "Employee")
-
+@Table(name = "employee")
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
     @Column(name = "first_name")
-    @NotNull
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
@@ -19,7 +16,7 @@ public class Employee {
     private String gender;
     @Column(name = "age")
     private int age;
-    @Column(name = "cty_id")
+    @Column(name = "city_id")
     private int cityId;
 
     public Employee(String firstName, String lastName, String gender, int age, int cityId) {
@@ -30,14 +27,15 @@ public class Employee {
         this.cityId = cityId;
     }
 
-    public Employee(String firstName, String lastName, String gender, int age) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.gender = gender;
-        this.age = age;
+    public Employee() {
     }
 
-    public Employee() {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -85,21 +83,23 @@ public class Employee {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Employee employee = (Employee) o;
-        return age == employee.age && cityId == employee.cityId && Objects.equals(firstName, employee.firstName) && Objects.equals(lastName, employee.lastName) && Objects.equals(gender, employee.gender);
+        return id == employee.id && age == employee.age && cityId == employee.cityId && Objects.equals(firstName, employee.firstName) && Objects.equals(lastName, employee.lastName) && Objects.equals(gender, employee.gender);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, gender, age, cityId);
+        return Objects.hash(id, firstName, lastName, gender, age, cityId);
     }
 
     @Override
     public String toString() {
-        return "Employee - " +
-                "firstName='" + firstName + '\'' +
+        return "Employee{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", gender='" + gender + '\'' +
                 ", age=" + age +
-                ", cityId=" + cityId + "\n";
+                ", cityId=" + cityId +
+                '}';
     }
 }
