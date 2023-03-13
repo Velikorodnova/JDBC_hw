@@ -18,6 +18,8 @@ public class Employee {
     private int age;
     @Column(name = "city_id")
     private int cityId;
+    @ManyToOne
+    private City city;
 
     public Employee(String firstName, String lastName, String gender, int age, int cityId) {
         this.firstName = firstName;
@@ -25,6 +27,15 @@ public class Employee {
         this.gender = gender;
         this.age = age;
         this.cityId = cityId;
+    }
+
+    public Employee(int id, String firstName, String lastName, String gender, int age, City city) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.gender = gender;
+        this.age = age;
+        this.city = city;
     }
 
     public Employee() {
@@ -76,6 +87,14 @@ public class Employee {
 
     public void setCityId(int cityId) {
         this.cityId = cityId;
+    }
+
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
     }
 
     @Override
